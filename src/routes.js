@@ -9,5 +9,5 @@ routes.post('/session', SessionController.store);
 routes.get('/students', StudentController.getAll);
 routes.get('/students/:id', StudentController.getOne);
 routes.put('/students/:id', StudentController.update);
-
+routes.delete('/students/:id', StudentController.delete);
 export default routes;

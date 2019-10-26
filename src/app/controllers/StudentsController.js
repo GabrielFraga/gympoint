@@ -44,6 +44,18 @@ class StudentController {
     res.json({ student });
   }
 
+  async delete(req, res) {
+    const student = await Student.findByPk(req.params.id);
+    if (!student) {
+      res.status(404).json({ error: 'user not found' });
+    }
+    await student.destroy();
+    const students = await Student.findAll();
+    res.json({
+      students,
+    });
+  }
+
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
