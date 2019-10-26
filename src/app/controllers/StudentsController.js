@@ -12,7 +12,7 @@ class StudentController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      res.status(400).json({ error: 'validation fails' });
+      return res.status(400).json({ error: 'validation fails' });
     }
 
     const studentExists = await Student.findOne({
@@ -20,12 +20,12 @@ class StudentController {
     });
 
     if (studentExists) {
-      res.status(400).json({ error: 'student already exists' });
+      return res.status(400).json({ error: 'student already exists' });
     }
 
     const { id, name, email, weight, height } = await Student.create(req.body);
 
-    res.json({
+    return res.json({
       id,
       name,
       email,
@@ -36,12 +36,12 @@ class StudentController {
 
   async getAll(req, res) {
     const students = await Student.findAll();
-    res.json({ students });
+    return res.json({ students });
   }
 
   async getOne(req, res) {
     const student = await Student.findByPk(req.params.id);
-    res.json({ student });
+    return res.json({ student });
   }
 
   async delete(req, res) {
@@ -51,7 +51,7 @@ class StudentController {
     }
     await student.destroy();
     const students = await Student.findAll();
-    res.json({
+    return res.json({
       students,
     });
   }
@@ -66,13 +66,13 @@ class StudentController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      res.status(400).json({ error: 'validation fails' });
+      return res.status(400).json({ error: 'validation fails' });
     }
 
     const student = await Student.findByPk(req.params.id);
 
     if (!student) {
-      res.status(401).json({ error: 'user does not exists' });
+      return res.status(401).json({ error: 'user does not exists' });
     }
 
     if (req.body.email && req.body.email !== student.email) {
@@ -81,12 +81,14 @@ class StudentController {
       });
 
       if (emailInUse) {
-        res.status(400).json({ error: 'email already in use by another user' });
+        return res
+          .status(400)
+          .json({ error: 'email already in use by another user' });
       }
     }
     const { id, email, age, height, weight } = await student.update(req.body);
 
-    res.json({
+    return res.json({
       id,
       email,
       age,
