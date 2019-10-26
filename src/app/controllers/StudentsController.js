@@ -34,6 +34,16 @@ class StudentController {
     });
   }
 
+  async getAll(req, res) {
+    const students = await Student.findAll();
+    res.json({ students });
+  }
+
+  async getOne(req, res) {
+    const student = await Student.findByPk(req.params.id);
+    res.json({ student });
+  }
+
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
