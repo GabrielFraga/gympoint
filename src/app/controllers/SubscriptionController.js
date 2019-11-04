@@ -54,7 +54,16 @@ class SubscriptionController {
   }
 
   async delete(req, res) {
-    return res.json({ message: 'ok' });
+    const subscription = await Subscription.findByPk(req.params.id);
+
+    if (!subscription) {
+      return res.status(401).json({ error: 'subscription does not exists' });
+    }
+
+    await subscription.destroy();
+    const subs = await Subscription.findAll();
+
+    return res.json(subs);
   }
 }
 
