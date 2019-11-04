@@ -34,7 +34,23 @@ class SubscriptionController {
   }
 
   async update(req, res) {
-    return res.json({ message: 'ok' });
+    const schema = Yup.object().shape({
+      title: Yup.string(),
+      duration: Yup.number(),
+      price: Yup.number(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'validation fails' });
+    }
+
+    const subscription = await Subscription.findByPk(req.params.id);
+
+    if (!subscription) {
+      return res.status(401).json({ error: 'subscription does not exists' });
+    }
+    const sub = await subscription.update(req.body);
+    return res.json(sub);
   }
 
   async delete(req, res) {
