@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import Subscription from '../models/Subscription';
 
 class SubscriptionController {
@@ -8,7 +9,28 @@ class SubscriptionController {
   }
 
   async store(req, res) {
-    return res.json({ message: 'ok' });
+    const schema = Yup.object().shape({
+      title: Yup.string().required(),
+      duration: Yup.number().required(),
+      price: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'validation fails' });
+    }
+    const subscritionExists = await Subscription.findOne({
+      where: {
+        title: req.body.title,
+      },
+    });
+
+    if (subscritionExists) {
+      return res.status(401).json({ error: `subscription already exists` });
+    }
+
+    const subscription = await Subscription.create(req.body);
+
+    return res.json(subscription);
   }
 
   async update(req, res) {
