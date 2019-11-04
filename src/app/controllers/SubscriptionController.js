@@ -2,7 +2,9 @@ import Subscription from '../models/Subscription';
 
 class SubscriptionController {
   async index(req, res) {
-    return res.json({ message: ' ok' });
+    const subscrition = await Subscription.findAll();
+
+    return res.json(subscrition);
   }
 
   async store(req, res) {
