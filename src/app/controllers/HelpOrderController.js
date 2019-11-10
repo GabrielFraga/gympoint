@@ -1,10 +1,13 @@
 import * as Yup from 'yup';
+import { parseISO } from 'date-fns';
 import HelpOrder from '../models/HelpOrder';
 import Student from '../models/Student';
 
 class HelpOrderController {
   async index(req, res) {
-    const order = await HelpOrder.findAll();
+    const order = await HelpOrder.findAll({
+      where: { answer: null },
+    });
 
     return res.json(order);
   }
@@ -42,6 +45,29 @@ class HelpOrderController {
       student_id: req.params.id,
     });
     return res.json(help_order);
+  }
+
+  async answer(req, res) {
+    const schema = Yup.object().shape({
+      answer: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(401).json({ error: 'answer not provided' });
+    }
+
+    const question = await HelpOrder.findByPk(req.params.id);
+
+    if (!question) {
+      return res.status(401).json({ error: 'question does not existss' });
+    }
+
+    const order = await question.update({
+      answer: req.body.answer,
+      answer_at: new Date(),
+    });
+
+    return res.json(order);
   }
 }
 
