@@ -106,6 +106,18 @@ class RegistrationController {
     return res.json(registration);
   }
 
-  async delete(req, res) {}
+  async delete(req, res) {
+    const registration = await Registration.findByPk(req.params.id);
+    if (!registration) {
+      res.status(404).json({ error: 'registry not found' });
+    }
+    await registration.destroy();
+    const registrations = await Registration.findAll({
+      order: ['createdAt'],
+    });
+    return res.json({
+      registrations,
+    });
+  }
 }
 export default new RegistrationController();
