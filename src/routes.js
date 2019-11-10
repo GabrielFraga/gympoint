@@ -11,13 +11,17 @@ import authMiddleware from './app/middleweres/auth';
 
 const routes = new Router();
 
+routes.get('/students/:id/checkins', CheckinController.index);
 routes.post('/students/:id/checkins', CheckinController.store);
 
-routes.get('/students/:id/help-orders', HelpOrderController.index);
+routes.get('/students/:id/help-orders', HelpOrderController.studentHelpOrders);
 routes.post('/students/:id/help-orders', HelpOrderController.store);
 
 routes.post('/session', SessionController.store);
 routes.use(authMiddleware);
+
+routes.get('/students/help-orders', HelpOrderController.index);
+
 routes.get('/students', StudentController.getAll);
 routes.get('/students/:id', StudentController.getOne);
 routes.post('/students', StudentController.store);
