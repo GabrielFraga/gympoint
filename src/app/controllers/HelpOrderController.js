@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
-import { parseISO } from 'date-fns';
 import HelpOrder from '../models/HelpOrder';
+import Queue from '../../lib/Queue';
+import AnswerHelpMail from '../jobs/AnswerHelpMail';
 import Student from '../models/Student';
 
 class HelpOrderController {
@@ -56,13 +57,19 @@ class HelpOrderController {
       return res.status(401).json({ error: 'answer not provided' });
     }
 
-    const question = await HelpOrder.findByPk(req.params.id);
+    const helpOrder = await HelpOrder.findByPk(req.params.id);
 
-    if (!question) {
-      return res.status(401).json({ error: 'question does not existss' });
+    if (!helpOrder) {
+      return res.status(401).json({ error: 'help order does not existss' });
     }
+    const student = await Student.findByPk(helpOrder.student_id);
 
-    const order = await question.update({
+    await Queue.add(AnswerHelpMail.key, {
+      student,
+      helpOrder,
+    });
+
+    const order = await helpOrder.update({
       answer: req.body.answer,
       answer_at: new Date(),
     });
