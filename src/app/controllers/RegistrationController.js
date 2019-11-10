@@ -8,7 +8,7 @@ import RegistrationMail from '../jobs/RegistrationMail';
 
 class RegistrationController {
   async index(req, res) {
-    const registrations = Registration.findAll();
+    const registrations = await Registration.findAll();
     return res.json(registrations);
   }
 
@@ -38,7 +38,7 @@ class RegistrationController {
     }
     const startDate = parseISO(start_date);
     const end_date = addMonths(startDate, plan.duration);
-    const price = plan.duration * plan.price;
+    const price = plan.total_price;
 
     const registration = await Registration.create({
       student_id,
@@ -59,7 +59,52 @@ class RegistrationController {
     return res.json(registration);
   }
 
-  async update(req, res) {}
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      plan_id: Yup.number(),
+      start_date: Yup.date(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'validation fails' });
+    }
+
+    const registration = await Registration.findByPk(req.params.id);
+
+    if (!registration) {
+      return res.status(400).json({ error: `registry does not exists` });
+    }
+
+    const { plan_id, start_date } = req.body;
+
+    if (plan_id) {
+      const plan = await Plan.findByPk(plan_id);
+
+      if (!plan) {
+        return res.status(400).json({ error: 'plan does not exists' });
+      }
+      const price = plan.total_price;
+
+      await registration.update({
+        plan_id,
+        price,
+      });
+    }
+
+    if (start_date) {
+      const plan = await Plan.findByPk(registration.plan_id);
+      const price = plan.total_price;
+      const startDate = parseISO(start_date);
+      const end_date = addMonths(startDate, plan.duration);
+
+      await registration.update({
+        start_date: startDate,
+        end_date,
+        price,
+      });
+    }
+    return res.json(registration);
+  }
 
   async delete(req, res) {}
 }
