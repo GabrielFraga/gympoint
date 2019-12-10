@@ -1,7 +1,24 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize'; // biblioteca de operadores
 import Student from '../models/Student';
 
 class StudentController {
+  async index(req, res) {
+    const { user } = req.query;
+
+    if (!user) {
+      const students = await Student.findAll();
+      return res.json({ students });
+    }
+    const students = await Student.findAll({
+      where: {
+        name: { [Op.like]: `%${user}` },
+      },
+    });
+
+    return res.json({ students });
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
@@ -34,8 +51,19 @@ class StudentController {
     });
   }
 
-  async getAll(req, res) {
-    const students = await Student.findAll();
+  async getByName(req, res) {
+    const { user } = req.query;
+
+    if (!user) {
+      const students = await Student.findAll();
+      return res.json({ students });
+    }
+    const students = await Student.findAll({
+      where: {
+        name: { [Op.like]: `%${user}%` },
+      },
+    });
+
     return res.json({ students });
   }
 
