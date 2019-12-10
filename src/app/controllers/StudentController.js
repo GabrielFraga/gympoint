@@ -51,22 +51,6 @@ class StudentController {
     });
   }
 
-  async getByName(req, res) {
-    const { user } = req.query;
-
-    if (!user) {
-      const students = await Student.findAll();
-      return res.json({ students });
-    }
-    const students = await Student.findAll({
-      where: {
-        name: { [Op.like]: `%${user}%` },
-      },
-    });
-
-    return res.json({ students });
-  }
-
   async getOne(req, res) {
     const student = await Student.findByPk(req.params.id);
     return res.json({ student });
