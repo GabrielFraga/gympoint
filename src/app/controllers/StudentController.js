@@ -5,18 +5,24 @@ import Student from '../models/Student';
 class StudentController {
   async index(req, res) {
     const { user } = req.query;
+    const { id } = req.query;
 
-    if (!user) {
+    if (!user && !id) {
       const students = await Student.findAll();
       return res.json({ students });
     }
-    const students = await Student.findAll({
-      where: {
-        name: { [Op.like]: `%${user}` },
-      },
-    });
 
-    return res.json({ students });
+    if (user) {
+      const students = await Student.findAll({
+        where: {
+          name: { [Op.like]: `%${user}` },
+        },
+      });
+      return res.json({ students });
+    }
+
+    const student = await Student.findByPk(id);
+    return res.json({ student });
   }
 
   async store(req, res) {

@@ -10,7 +10,7 @@ class HelpOrderController {
       where: { answer: null },
     });
 
-    return res.json(order);
+    return res.json({ order });
   }
 
   async studentHelpOrders(req, res) {
@@ -35,15 +35,16 @@ class HelpOrderController {
       return res.status(401).json({ error: 'question not provided' });
     }
 
-    const studentExists = await Student.findByPk(req.params.id);
+    const student = await Student.findByPk(req.params.id);
 
-    if (!studentExists) {
+    if (!student) {
       return res.status(401).json({ error: 'student not found' });
     }
 
     const help_order = await HelpOrder.create({
       question: req.body.question,
       student_id: req.params.id,
+      student_name: student.name,
     });
     return res.json(help_order);
   }
