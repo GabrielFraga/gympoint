@@ -9,9 +9,18 @@ import RegistrationMail from '../jobs/RegistrationMail';
 class RegistrationController {
   async index(req, res) {
     const registrations = await Registration.findAll({
-      attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
+      include: [
+        {
+          model: Student,
+          attributes: ['name'],
+        },
+        {
+          model: Plan,
+          attributes: ['title'],
+        },
+      ],
     });
-    return res.json(registrations);
+    return res.json({ registrations });
   }
 
   async store(req, res) {
