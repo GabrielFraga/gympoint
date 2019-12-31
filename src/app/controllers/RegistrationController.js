@@ -8,7 +8,27 @@ import RegistrationMail from '../jobs/RegistrationMail';
 
 class RegistrationController {
   async index(req, res) {
-    const registrations = await Registration.findAll({
+    const { id } = req.query;
+    if (!id) {
+      const registrations = await Registration.findAll({
+        include: [
+          {
+            model: Student,
+            attributes: ['name'],
+          },
+          {
+            model: Plan,
+            attributes: ['title'],
+          },
+        ],
+      });
+      return res.json({ registrations });
+    }
+
+    const registration = await Registration.findAll({
+      where: {
+        id,
+      },
       include: [
         {
           model: Student,
@@ -20,7 +40,7 @@ class RegistrationController {
         },
       ],
     });
-    return res.json({ registrations });
+    return res.json({ registration });
   }
 
   async store(req, res) {

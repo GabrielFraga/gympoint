@@ -41,7 +41,7 @@ class CheckinController {
 
     const checkin = await Checkin.create({ student_id: req.params.id });
 
-    return res.json(checkin);
+    return res.json({ checkin });
   }
 }
 

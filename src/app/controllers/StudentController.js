@@ -15,7 +15,7 @@ class StudentController {
     if (user) {
       const students = await Student.findAll({
         where: {
-          name: { [Op.like]: `%${user}` },
+          name: { [Op.like]: `%${user}%` },
         },
       });
       return res.json({ students });

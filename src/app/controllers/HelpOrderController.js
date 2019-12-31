@@ -21,9 +21,11 @@ class HelpOrderController {
 
     const order = await HelpOrder.findAll({
       where: { student_id: req.params.id },
+      order: [['createdAt', 'DESC']],
+      limit: 6,
     });
 
-    return res.json(order);
+    return res.json({ order });
   }
 
   async store(req, res) {

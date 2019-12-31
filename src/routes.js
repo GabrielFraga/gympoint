@@ -16,6 +16,7 @@ routes.post('/students/:id/checkins', CheckinController.store);
 
 routes.get('/students/:id/help-orders', HelpOrderController.studentHelpOrders);
 routes.post('/students/:id/help-orders', HelpOrderController.store);
+routes.get('/students/:id', StudentController.getOne);
 
 routes.post('/session', SessionController.store);
 routes.use(authMiddleware);
@@ -24,7 +25,6 @@ routes.get('/students/help-orders', HelpOrderController.index);
 routes.post('/help-orders/:id/answer', HelpOrderController.answer);
 
 routes.get('/students/', StudentController.index);
-routes.get('/students/:id', StudentController.getOne);
 routes.post('/students', StudentController.store);
 routes.put('/students/:id', StudentController.update);
 routes.delete('/students/:id', StudentController.delete);
